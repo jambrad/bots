@@ -19,14 +19,11 @@ namespace Bot
 
         private void BotField_Load(object sender, EventArgs e)
         {
-            myBot = new Bot(200f, 200f);
+            myBot = new Bot(Field.Width / 2, Field.Height / 2);
 
             myPen = new Pen(Color.Black);
 
             testPen = new Pen(Color.Red, 5);
-
-            //Console.WriteLine(Math.Sin(35));
-            //Console.WriteLine(Math.Sin((35 / (Math.PI * 2))) * 4.9);
         }
 
         private void BotField_Paint(object sender, PaintEventArgs e)
@@ -38,18 +35,18 @@ namespace Bot
 
         private void Refresher_Tick(object sender, EventArgs e)
         {
-            myBot.Move(speed, turn);
+            myBot.Move(LeftValue, RightValue);
             Field.Refresh();
         }
 
-        private void TurnBar_Scroll(object sender, EventArgs e)
+        private void LeftBar_Scroll(object sender, EventArgs e)
         {
-            turn = (TurnBar.Value / (float)TurnBar.Maximum);
+            LeftValue = (LeftBar.Value / (float)LeftBar.Maximum);
         }
 
-        private void SpeedBar_Scroll(object sender, EventArgs e)
+        private void RightBar_Scroll(object sender, EventArgs e)
         {
-            speed = (SpeedBar.Value / (float)SpeedBar.Maximum);
+            RightValue = (RightBar.Value / (float)RightBar.Maximum);
         }
 
         private void Field_Paint(object sender, PaintEventArgs e)
@@ -63,7 +60,7 @@ namespace Bot
         private Pen myPen;
         private Pen testPen;
 
-        private float turn;
-        private float speed;
+        private float LeftValue;
+        private float RightValue;
     }
 }
