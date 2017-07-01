@@ -1,307 +1,233 @@
 ﻿using System;
 using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Bot
 {
     class Bot
     {
         private const float LENGTH = 30f;
-        private const float MAX_SPEED = 3f;
+        private const float MAX_DISTANCE_PER_SECOND = 100f; 
         private const float TURN_RATE = 10f;
 
-        private const int Q1 = 0;
-        private const int Q2 = 1;
-        private const int Q3 = 2;
-        private const int Q4 = 3;
-        private const int PX = 4;
-        private const int PY = 5;
-        private const int NX = 6;
-        private const int NY = 7;
+        private readonly float maxSpeed;
 
 
-        public Bot(float x, float y)
+        // primary constructor
+        public Bot(float x, float y, int interval)
         {
+            // bot location and orientation
             Anchor = new PointF(x - (LENGTH / 2), y - (LENGTH / 2));
-
             Center = new PointF(x, y);
+            Angle = new Angle(90);
 
+            // bot dimensions
             Size = new SizeF(LENGTH, LENGTH);
-
             Boundaries = new RectangleF(Anchor, Size);
 
-            Angle = 90f;
+            // bot pen
+            boundaryPen = new Pen(Color.Black);
+            frontPen = new Pen(Color.Red);
+
+            maxSpeed = MAX_DISTANCE_PER_SECOND * (interval / 1000f);
         }
 
-        public Bot() : this(0f, 0f) { }
-
-
-        //private void MoveCenter(float speed)
-        //{
-        //    float deltaX = (float)(Math.Cos(RelativeRad) * speed);
-        //    float deltaY = (float)(Math.Sin(RelativeRad) * speed);
-
-        //    //Console.WriteLine("1 - a " + Angle + " - ra " + RelativeAngle + " - dX " + deltaX + " - dY " + deltaY);
-
-        //    deltaX *= TransformX(deltaX);
-        //    deltaY *= TransformY(deltaY);
-
-        //    //Console.WriteLine("2 - a " + Angle + " - ra " + RelativeAngle + " - dX " + deltaX + " - dY " + deltaY);
-
-        //    Anchor = new PointF(Anchor.X + deltaX, Anchor.Y - deltaY);
-        //    Center = new PointF(Center.X + deltaX, Center.Y - deltaY);
-
-        //    boundaries.Location = Anchor;
-        //}
-
-        //private void Turn(float turnAngle)
-        //{
-        //    Angle = Angle + turnAngle;
-
-        //    if (Angle > 180)
-        //    {
-        //        var offsetAngle = Angle - 180;
-
-        //        Angle = -180 + offsetAngle;
-        //    }
-
-        //    else if (Angle < -180)
-        //    {
-        //        var offsetAngle = -180 - Angle;
-
-        //        Angle = 180 - offsetAngle;
-        //    }
-        //}
-
-        private void MoveCenter(float newX, float newY)
-        {
-
-        }
-
-        //private void Turn(float left, float right)
-        //{
-        //    if (Math.Abs(left) > Math.Abs(right))
-        //    {
-        //        Angle = Angle + (TURN_RATE * (left - right));
-        //    }
-
-        //    else
-        //    {
-        //        Angle = Angle = Angle - (TURN_RATE * (right - left));
-        //    }
-        //}
-
-        //private void TurnLeft(float rate)
-        //{
-            
-        //}
-
+        // default constructor
+        public Bot(int interval) : this(0f, 0f, interval) { }
         
 
-        public void Move(float left, float right)
+        // draw the object
+        public void Draw(PaintEventArgs e)
         {
-            Turn(right * TURN_RATE);
-            MoveCenter(left * MAX_SPEED);
+            e.Graphics.DrawEllipse(boundaryPen, Boundaries);
+            var frontPoint = FindPointFromCenter(Angle, Radius);
+            var points = new PointF[] { frontPoint, frontPoint };
+            e.Graphics.DrawLines(frontPen, points);
         }
 
-        public PointF FindTurningPoint(float left, float right)
+        // update location and direction of the bot
+        public void Move(float left, float right)
+        {
+            if (left == right)
+            {
+                // passing left or right doesn't matter
+                // they're both equal in speed
+                StraightMove(left); 
+            }
+
+            else
+            {
+                var turningAngle = TurningPointAngle(left, right);
+                var turningRadius = TurningPointDistance(left, right);
+                var turningPoint = FindPointFromCenter(turningAngle, turningRadius);
+
+                if (turningPoint.Equals(Center))
+                {
+                    StraightMove(left);
+                }
+
+                else
+                {
+                    CurvedMove(turningPoint, turningAngle, turningRadius, left, right);
+                }
+            }
+        }
+
+
+        private PointF FindPointFromCenter(Angle angle, float distance)
+        {
+            return FindPointFrom(Center, angle, distance);
+        }
+
+        private PointF FindPointFrom(PointF basePoint, Angle angle, float distance)
+        {
+            float x = (float)(Math.Cos(angle.Radian) * distance);
+            float y = (float)(Math.Sin(angle.Radian) * distance);
+
+            x = basePoint.X + x;
+            y = basePoint.Y - y;
+
+            return new PointF(x, y);
+        }
+
+        private Angle TurningPointAngle(float left, float right)
+        {
+            return new Angle(Angle.Degree + (Math.Abs(left) < Math.Abs(right) ? 90 : -90));
+        }
+
+        private float TurningPointDistance(float left, float right)
+        {
+            var faster = (left > right ? left : right);
+            var slower = (left < right ? left : right);
+
+            return Math.Abs(Radius * (faster / (faster - slower)));
+        }
+
+        private void StraightMove(float speed)
+        {
+            var distance = GetTravelDistance(speed);
+
+            var newCenter = FindPointFromCenter(Angle, distance);
+
+            MoveCenter(newCenter);
+        }
+
+        private void CurvedMove(PointF turningPoint, Angle turningAngle, float turningRadius, float left, float right)
+        {
+            turningAngle.Reverse();
+
+            OuterCurvedMove(turningPoint, turningAngle, turningRadius, left, right);
+
+            //// turning point is outside the bot
+            //if (turningRadius > Radius) 
+            //{
+            //    OuterCurvedMove(turningPoint, turningAngle, turningRadius, left, right);
+            //}
+
+            //// turning point is within the bot
+            //else if (turningRadius < Radius)
+            //{
+            //    InnerCurvedMove(turningPoint, left, right);
+            //}
+
+            //// turning point is either on the left or right wheel
+            //else
+            //{
+            //    Pivot(turningPoint, left, right);
+            //}
+        }
+
+        private void OuterCurvedMove(PointF turningPoint, Angle turningAngle, float turningRadius, float left, float right)
+        {
+            var rotationFactor = GetRotationFactor(left, right);
+            var greaterSpeed = (left > right ? left : right);
+
+            // difference between turn base angle and turn end angle
+            var curveAngle = GetAngleOfCurve(turningPoint, turningAngle, turningRadius + Radius, GetTravelDistance(greaterSpeed));
+            
+            var endAngle = new Angle(turningAngle.Degree + (curveAngle.Degree * rotationFactor));
+
+            var endPoint = FindPointFrom(turningPoint, endAngle, turningRadius);
+
+            Console.WriteLine("Ac -> " + curveAngle.Degree + " Ae -> " + endAngle.Degree);
+
+            Angle.Degree = endAngle.Degree + (90 * rotationFactor);
+            MoveCenter(endPoint);
+        }
+
+        private void InnerCurvedMove(PointF turningPoint, float left, float right)
+        {
+
+        }
+
+        private void Pivot(PointF turningPointf, float left, float right)
+        {
+
+        }
+
+        private int GetRotationFactor(float left, float right)
         {
             var absLeft = Math.Abs(left);
             var absRight = Math.Abs(right);
 
-            if (absLeft == absRight)
+            if (absLeft < absRight)
             {
-                return Center;
+                if (left < right)
+                {
+                    return 1;
+                }
+
+                else
+                {
+                    return -1;
+                }
             }
 
-            else if (absLeft == 0 && absRight != 0)
+            else if (absLeft > absRight)
             {
+                if (left < right)
+                {
+                    return 1;
+                }
 
-            }
-        }
-
-        //private float TransformX(float x)
-        //{
-        //    if (Angle < 0 && Angle != -180)
-        //    {
-        //        return x * -1;
-        //    }
-
-        //    else if (Angle > 0 && Angle != 180)
-        //    {
-        //        return x;
-        //    }
-
-        //    else
-        //    {
-        //        return 0f;
-        //    }
-        //}
-
-        //private float TransformY(float y)
-        //{
-        //    if (Angle < 90 && Angle > -90)
-        //    {
-        //        return y;
-        //    }
-
-        //    else if ((Angle < -90 || Angle > 90) && (Math.Abs(Angle) != 180))
-        //    {
-        //        return y * -1;
-        //    }
-
-        //    else
-        //    {
-        //        return 0f;
-        //    }
-        //}
-
-
-        private PointF FindPointFromCenter(float degrees, float distance)
-        {
-            float x = (float)(Math.Cos(RelativeRad + degrees) * distance);
-            float y = (float)(Math.Sin(RelativeRad + degrees) * distance);
-
-            x += Center.X;
-            y += Center.Y;
-
-            return new PointF(x, y);
-        }
-        
-        private int GetAngleOrientation(float degrees)
-        {
-            if (degrees > 0 && degrees < 90)
-            {
-                return Q1;
-            }
-
-            else if (degrees > 90 && degrees < 180)
-            {
-                return Q2;
-            }
-
-            else if (degrees > 180 && degrees < 270)
-            {
-                return Q3;
-            }
-
-            else if (degrees > 270 && degrees < 360)
-            {
-                return Q4;
-            }
-
-            else if (degrees == 0)
-            {
-                return PX;
-            }
-
-            else if (degrees == 90)
-            {
-                return PY;
-            }
-
-            else if (degrees == 180)
-            {
-                return NX;
+                else
+                {
+                    return -1;
+                }
             }
 
             else
             {
-                return NY;
+                return 0;
             }
         }
 
-        private float SimplifyAngle(float angle)
+        private float GetTravelDistance(float wheelSpeed)
         {
-            if (angle >= 360)
-            {
-                return angle - 360;
-            }
-
-            else if (angle < 0)
-            {
-                return angle + 360;
-            }
-
-            else
-            {
-                return angle;
-            }
+            return wheelSpeed * maxSpeed;
         }
 
-        public float GetRelativeAngle(float angle)
+        private Angle GetAngleOfCurve(PointF turningPoint, Angle turningBaseAngle, float turningRadius, float targetDistance)
         {
-            switch (GetAngleOrientation(angle))
-            {
-                case Q1:
-                    break;
-                case Q2:
-                    break;
-                case Q3:
-                    break;
-                case Q4:
-                    break;
-                case PX:
-                    break;
-                case PY:
-                    break;
-                case NX:
-                    break;
-                case NY:
-                    break;
-            }
+            var turningDiameter = turningRadius * 2;
 
-            if (Angle > 0 && Angle < 90) // Q1
-            {
-                return 90 - Angle;
-            }
-
-            else if (Angle < 0 && Angle > -90) // Q2
-            {
-                return -90 - Angle;
-            }
-
-            else if (Angle < -90 && Angle > -180) // Q3
-            {
-                return Angle + 90;
-            }
-
-            else if (Angle > 90 && Angle < 180) // Q4
-            {
-                return Angle - 90;
-            }
-
-            else if (Angle == 0) // +Y axis
-            {
-                return 90f;
-            }
-
-            else if (Angle == 90) // +X axis
-            {
-                return 0f;
-            }
-
-            else if (Angle == -90) // -X axis
-            {
-                return 0f;
-            }
-
-            else // -Y axis
-            {
-                return 90f;
-            }
+            return new Angle((360 * targetDistance) / ((float)Math.PI * turningDiameter));
         }
 
-        public float RelativeRad
+
+        private void MoveCenter(PointF newCenter)
         {
-            get
-            {
-                //return (float)(RelativeAngle / (Math.PI * 2));
-                return DegreeToRad(GetRelativeAngle);
-            }
+            Anchor = new PointF(newCenter.X - Radius, newCenter.Y - Radius);
+
+            Center = newCenter;
+
+            boundaries.X = Anchor.X;
+            boundaries.Y = Anchor.Y;
+        }
+
+        private void MoveCenter(float newX, float newY)
+        {
+
         }
 
 
@@ -311,7 +237,7 @@ namespace Bot
 
         public SizeF Size { get; private set; }
 
-        public float Angle { get; private set; }
+        public Angle Angle { get; private set; }
         
 
         public float Radius
@@ -330,11 +256,6 @@ namespace Bot
             }
         }
 
-        private float DegreeToRad(float degree)
-        {
-            return degree * 0.0174533f;
-        }
-
         public RectangleF Boundaries
         {
             get
@@ -348,6 +269,9 @@ namespace Bot
             }
         }
 
+
+        private Pen boundaryPen;
+        private Pen frontPen;
 
         private RectangleF boundaries;
     }

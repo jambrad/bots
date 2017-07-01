@@ -115,7 +115,6 @@
             this.Name = "BotField";
             this.Text = "BOTS OF LEGENDS";
             this.Load += new System.EventHandler(this.BotField_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.BotField_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.LeftBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.RightBar)).EndInit();
             this.ResumeLayout(false);
