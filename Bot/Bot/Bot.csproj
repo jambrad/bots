@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Angle.cs" />
     <Compile Include="Bot.cs" />
     <Compile Include="BotField.cs">
       <SubType>Form</SubType>
