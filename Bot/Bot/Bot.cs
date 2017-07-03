@@ -61,15 +61,19 @@ namespace Bot
                 var turningRadius = TurningPointDistance(left, right);
                 var turningPoint = FindPointFromCenter(turningAngle, turningRadius);
 
-                if (turningPoint.Equals(Center))
-                {
-                    StraightMove(left);
-                }
+                //Console.WriteLine("a" + turningAngle.Degree + " r" + turningRadius + " p" + turningPoint);
 
-                else
-                {
+                //if (turningPoint.Equals(Center))
+                //{
+                //    StraightMove(left);
+                //}
+
+                //else
+                //{
+
+                Console.WriteLine("tP " + turningPoint.Equals(Center));
                     CurvedMove(turningPoint, turningAngle, turningRadius, left, right);
-                }
+                //}
             }
         }
 
@@ -97,8 +101,13 @@ namespace Bot
 
         private float TurningPointDistance(float left, float right)
         {
-            var faster = (left > right ? left : right);
-            var slower = (left < right ? left : right);
+            var absLeft = Math.Abs(left);
+            var absRight = Math.Abs(right);
+
+            var faster = (absLeft > absRight ? absLeft : absRight);
+            var slower = (absLeft < absRight ? absLeft : absRight);
+
+            //Console.WriteLine("distance " + Math.Abs(Radius * (faster / (faster - slower))) + " f" + faster + " s" + slower);
 
             return Math.Abs(Radius * (faster / (faster - slower)));
         }
@@ -116,53 +125,20 @@ namespace Bot
         {
             turningAngle.Reverse();
 
-            OuterCurvedMove(turningPoint, turningAngle, turningRadius, left, right);
-
-            //// turning point is outside the bot
-            //if (turningRadius > Radius) 
-            //{
-            //    OuterCurvedMove(turningPoint, turningAngle, turningRadius, left, right);
-            //}
-
-            //// turning point is within the bot
-            //else if (turningRadius < Radius)
-            //{
-            //    InnerCurvedMove(turningPoint, left, right);
-            //}
-
-            //// turning point is either on the left or right wheel
-            //else
-            //{
-            //    Pivot(turningPoint, left, right);
-            //}
-        }
-
-        private void OuterCurvedMove(PointF turningPoint, Angle turningAngle, float turningRadius, float left, float right)
-        {
             var rotationFactor = GetRotationFactor(left, right);
-            var greaterSpeed = (left > right ? left : right);
+            var greaterSpeed = (Math.Abs(left) > Math.Abs(right) ? left : right);
 
             // difference between turn base angle and turn end angle
             var curveAngle = GetAngleOfCurve(turningPoint, turningAngle, turningRadius + Radius, GetTravelDistance(greaterSpeed));
-            
+
             var endAngle = new Angle(turningAngle.Degree + (curveAngle.Degree * rotationFactor));
+
+            //Console.WriteLine("t" + turningAngle.Degree + " c" + curveAngle.Degree + " e" + endAngle);
 
             var endPoint = FindPointFrom(turningPoint, endAngle, turningRadius);
 
-            Console.WriteLine("Ac -> " + curveAngle.Degree + " Ae -> " + endAngle.Degree);
-
             Angle.Degree = endAngle.Degree + (90 * rotationFactor);
             MoveCenter(endPoint);
-        }
-
-        private void InnerCurvedMove(PointF turningPoint, float left, float right)
-        {
-
-        }
-
-        private void Pivot(PointF turningPointf, float left, float right)
-        {
-
         }
 
         private int GetRotationFactor(float left, float right)
