@@ -145,8 +145,6 @@ namespace Bot
             }
         }
 
-        
-
 
         private float degree;
         private float radian;

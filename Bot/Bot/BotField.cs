@@ -28,7 +28,10 @@ namespace Bot
 
         private void Refresher_Tick(object sender, EventArgs e)
         {
-            //myBot.Move(1f, 1f);
+            //myBot.Move(.45f, -.48f);
+            //myBot.Move(.48f, -.45f);
+            //myBot.Move(-.45f, .48f);
+            //myBot.Move(-.48f, .45f);
             myBot.Move(LeftValue, RightValue);
             Field.Refresh();
         }

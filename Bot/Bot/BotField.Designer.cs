@@ -47,23 +47,26 @@
             // 
             // LeftBar
             // 
-            this.LeftBar.Location = new System.Drawing.Point(939, 12);
+            this.LeftBar.Location = new System.Drawing.Point(704, 10);
+            this.LeftBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.LeftBar.Maximum = 100;
             this.LeftBar.Minimum = -100;
             this.LeftBar.Name = "LeftBar";
             this.LeftBar.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.LeftBar.Size = new System.Drawing.Size(56, 525);
+            this.LeftBar.Size = new System.Drawing.Size(45, 427);
             this.LeftBar.TabIndex = 1;
             this.LeftBar.TickFrequency = 10;
+            this.LeftBar.Scroll += new System.EventHandler(this.LeftBar_Scroll);
             this.LeftBar.ValueChanged += new System.EventHandler(this.LeftBar_Scroll);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(944, 540);
+            this.label3.Location = new System.Drawing.Point(708, 439);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(19, 23);
+            this.label3.Size = new System.Drawing.Size(17, 21);
             this.label3.TabIndex = 4;
             this.label3.Text = "L";
             // 
@@ -71,48 +74,53 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Century Gothic", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(1008, 540);
+            this.label4.Location = new System.Drawing.Point(756, 439);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(22, 23);
+            this.label4.Size = new System.Drawing.Size(20, 21);
             this.label4.TabIndex = 5;
             this.label4.Text = "R";
             // 
             // Field
             // 
             this.Field.BackColor = System.Drawing.Color.White;
-            this.Field.Location = new System.Drawing.Point(12, 12);
+            this.Field.Location = new System.Drawing.Point(9, 10);
+            this.Field.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Field.Name = "Field";
-            this.Field.Size = new System.Drawing.Size(893, 572);
+            this.Field.Size = new System.Drawing.Size(670, 465);
             this.Field.TabIndex = 7;
             this.Field.Paint += new System.Windows.Forms.PaintEventHandler(this.Field_Paint);
             // 
             // RightBar
             // 
-            this.RightBar.Location = new System.Drawing.Point(1001, 12);
+            this.RightBar.Location = new System.Drawing.Point(751, 10);
+            this.RightBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.RightBar.Maximum = 100;
             this.RightBar.Minimum = -100;
             this.RightBar.Name = "RightBar";
             this.RightBar.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.RightBar.Size = new System.Drawing.Size(56, 525);
+            this.RightBar.Size = new System.Drawing.Size(45, 427);
             this.RightBar.TabIndex = 8;
             this.RightBar.TickFrequency = 10;
             this.RightBar.Scroll += new System.EventHandler(this.RightBar_Scroll);
             // 
             // BotField
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(1069, 593);
+            this.ClientSize = new System.Drawing.Size(802, 482);
             this.Controls.Add(this.RightBar);
             this.Controls.Add(this.Field);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.LeftBar);
             this.DoubleBuffered = true;
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "BotField";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "BOTS OF LEGENDS";
             this.Load += new System.EventHandler(this.BotField_Load);
             ((System.ComponentModel.ISupportInitialize)(this.LeftBar)).EndInit();

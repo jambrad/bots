@@ -17,7 +17,7 @@ namespace Bot
         public Bot(float x, float y, int interval)
         {
             // bot location and orientation
-            Anchor = new PointF(x - (LENGTH / 2), y - (LENGTH / 2));
+            Anchor = new PointF(x - Radius, y - Radius);
             Center = new PointF(x, y);
             Angle = new Angle(90);
 
@@ -28,6 +28,7 @@ namespace Bot
             // bot pen
             boundaryPen = new Pen(Color.Black);
             frontPen = new Pen(Color.Red);
+            turningPen = new Pen(Color.Blue);
 
             maxSpeed = MAX_DISTANCE_PER_SECOND * (interval / 1000f);
         }
@@ -40,19 +41,35 @@ namespace Bot
         public void Draw(PaintEventArgs e)
         {
             e.Graphics.DrawEllipse(boundaryPen, Boundaries);
+
             var frontPoint = FindPointFromCenter(Angle, Radius);
-            var points = new PointF[] { frontPoint, frontPoint };
-            e.Graphics.DrawLines(frontPen, points);
+            var frontLine = new PointF[] { frontPoint, Center };
+            var turningLine = new PointF[] { recentTurningPoint, Center };
+
+            e.Graphics.DrawLines(frontPen, frontLine);
+            e.Graphics.DrawLines(turningPen, turningLine);
         }
 
         // update location and direction of the bot
         public void Move(float left, float right)
         {
-            if (left == right)
+            if (Math.Abs(left) == Math.Abs(right))
             {
-                // passing left or right doesn't matter
-                // they're both equal in speed
-                StraightMove(left); 
+                if (left == right)
+                {
+                    // passing left or right doesn't matter
+                    // they're both equal in speed
+                    StraightMove(left);
+                }
+
+                else
+                {
+                    var rotationFactor = GetPrimaryRotationFactor(left, right);
+
+                    // passing left or right doesn't matter
+                    // they're both equal in speed
+                    TwistMove(Math.Abs(left), rotationFactor);
+                }
             }
 
             else
@@ -61,19 +78,9 @@ namespace Bot
                 var turningRadius = TurningPointDistance(left, right);
                 var turningPoint = FindPointFromCenter(turningAngle, turningRadius);
 
-                //Console.WriteLine("a" + turningAngle.Degree + " r" + turningRadius + " p" + turningPoint);
+                recentTurningPoint = turningPoint;
 
-                //if (turningPoint.Equals(Center))
-                //{
-                //    StraightMove(left);
-                //}
-
-                //else
-                //{
-
-                Console.WriteLine("tP " + turningPoint.Equals(Center));
-                    CurvedMove(turningPoint, turningAngle, turningRadius, left, right);
-                //}
+                CurvedMove(turningPoint, turningAngle, turningRadius, left, right);
             }
         }
 
@@ -104,10 +111,8 @@ namespace Bot
             var absLeft = Math.Abs(left);
             var absRight = Math.Abs(right);
 
-            var faster = (absLeft > absRight ? absLeft : absRight);
-            var slower = (absLeft < absRight ? absLeft : absRight);
-
-            //Console.WriteLine("distance " + Math.Abs(Radius * (faster / (faster - slower))) + " f" + faster + " s" + slower);
+            var faster = (absLeft > absRight ? left : right);
+            var slower = (absLeft < absRight ? left : right);
 
             return Math.Abs(Radius * (faster / (faster - slower)));
         }
@@ -121,62 +126,80 @@ namespace Bot
             MoveCenter(newCenter);
         }
 
+        private void TwistMove(float speed, int rotationFactor)
+        {
+            var curveAngle = GetAngleOfCurve(Center, Angle, Radius, GetTravelDistance(speed));
+
+            var endAngle = new Angle(Angle.Degree + (curveAngle.Degree * rotationFactor));
+
+            Angle = endAngle;
+        }
+
         private void CurvedMove(PointF turningPoint, Angle turningAngle, float turningRadius, float left, float right)
         {
-            turningAngle.Reverse();
+            //if (!GetTertiaryRotationFactor(left, right))
+                turningAngle.Reverse();
 
-            var rotationFactor = GetRotationFactor(left, right);
-            var greaterSpeed = (Math.Abs(left) > Math.Abs(right) ? left : right);
+            var absLeft = Math.Abs(left);
+            var absRight = Math.Abs(right);
+
+            var primaryRotationFactor = GetPrimaryRotationFactor(left, right);
+            var secondaryRotationFactor = GetSecondaryRotationFactor(left, right);
+            var greaterSpeed = (absLeft > absRight ? absLeft : absRight);
 
             // difference between turn base angle and turn end angle
             var curveAngle = GetAngleOfCurve(turningPoint, turningAngle, turningRadius + Radius, GetTravelDistance(greaterSpeed));
 
-            var endAngle = new Angle(turningAngle.Degree + (curveAngle.Degree * rotationFactor));
-
-            //Console.WriteLine("t" + turningAngle.Degree + " c" + curveAngle.Degree + " e" + endAngle);
+            var endAngle = new Angle(turningAngle.Degree + (curveAngle.Degree * primaryRotationFactor));
 
             var endPoint = FindPointFrom(turningPoint, endAngle, turningRadius);
 
-            Angle.Degree = endAngle.Degree + (90 * rotationFactor);
+            Angle.Degree = endAngle.Degree + (90 * primaryRotationFactor * secondaryRotationFactor);
             MoveCenter(endPoint);
         }
 
-        private int GetRotationFactor(float left, float right)
+        private int GetPrimaryRotationFactor(float left, float right)
         {
-            var absLeft = Math.Abs(left);
-            var absRight = Math.Abs(right);
-
-            if (absLeft < absRight)
+            if (left == right)
             {
-                if (left < right)
-                {
-                    return 1;
-                }
-
-                else
-                {
-                    return -1;
-                }
-            }
-
-            else if (absLeft > absRight)
-            {
-                if (left < right)
-                {
-                    return 1;
-                }
-
-                else
-                {
-                    return -1;
-                }
+                return 0;
             }
 
             else
             {
-                return 0;
+                return (left < right ? 1 : -1);
             }
         }
+
+        private int GetSecondaryRotationFactor(float left, float right)
+        {
+            if (left < 0 || right < 0)
+            {
+                return -1;
+            }
+
+            else
+            {
+                return 1;
+            }
+        }
+
+        //private bool GetTertiaryRotationFactor(float left, float right)
+        //{
+        //    if (Math.Sign(left) != Math.Sign(right) && left != 0 && right != 0)
+        //    {
+        //        var absLeft = Math.Abs(left);
+        //        var absRight = Math.Abs(right);
+
+        //        var greater = (absLeft > absRight ? left : right);
+        //        var lesser = (absLeft < absRight ? left : right);
+        //    }
+
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
         private float GetTravelDistance(float wheelSpeed)
         {
@@ -199,11 +222,6 @@ namespace Bot
 
             boundaries.X = Anchor.X;
             boundaries.Y = Anchor.Y;
-        }
-
-        private void MoveCenter(float newX, float newY)
-        {
-
         }
 
 
@@ -248,7 +266,9 @@ namespace Bot
 
         private Pen boundaryPen;
         private Pen frontPen;
+        private Pen turningPen;
 
         private RectangleF boundaries;
+        private PointF recentTurningPoint;
     }
 }
