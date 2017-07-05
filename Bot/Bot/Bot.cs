@@ -124,7 +124,7 @@ namespace Bot
                 var faster = (absLeft > absRight ? absLeft : absRight);
                 var slower = (absLeft < absRight ? absLeft : absRight);
 
-                return Math.Abs(Radius * (faster - slower / faster));
+                return Math.Abs(Radius * ((faster - slower) / faster));
             }
         }
 
