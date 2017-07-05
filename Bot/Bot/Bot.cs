@@ -111,10 +111,21 @@ namespace Bot
             var absLeft = Math.Abs(left);
             var absRight = Math.Abs(right);
 
-            var faster = (absLeft > absRight ? left : right);
-            var slower = (absLeft < absRight ? left : right);
+            if (Math.Sign(left) == Math.Sign(right) || left == 0 || right == 0)
+            {
+                var faster = (absLeft > absRight ? left : right);
+                var slower = (absLeft < absRight ? left : right);
 
-            return Math.Abs(Radius * (faster / (faster - slower)));
+                return Math.Abs(Radius * (faster / (faster - slower)));
+            }
+
+            else
+            {
+                var faster = (absLeft > absRight ? absLeft : absRight);
+                var slower = (absLeft < absRight ? absLeft : absRight);
+
+                return Math.Abs(Radius * (faster - slower / faster));
+            }
         }
 
         private void StraightMove(float speed)
@@ -137,14 +148,14 @@ namespace Bot
 
         private void CurvedMove(PointF turningPoint, Angle turningAngle, float turningRadius, float left, float right)
         {
-            //if (!GetTertiaryRotationFactor(left, right))
-                turningAngle.Reverse();
+            turningAngle.Reverse();
 
             var absLeft = Math.Abs(left);
             var absRight = Math.Abs(right);
 
             var primaryRotationFactor = GetPrimaryRotationFactor(left, right);
             var secondaryRotationFactor = GetSecondaryRotationFactor(left, right);
+            var tertiaryRotationFactor = GetTertiaryRotationFactor(left, right);
             var greaterSpeed = (absLeft > absRight ? absLeft : absRight);
 
             // difference between turn base angle and turn end angle
@@ -154,7 +165,7 @@ namespace Bot
 
             var endPoint = FindPointFrom(turningPoint, endAngle, turningRadius);
 
-            Angle.Degree = endAngle.Degree + (90 * primaryRotationFactor * secondaryRotationFactor);
+            Angle.Degree = endAngle.Degree + (90 * primaryRotationFactor * secondaryRotationFactor) + tertiaryRotationFactor;
             MoveCenter(endPoint);
         }
 
@@ -184,22 +195,32 @@ namespace Bot
             }
         }
 
-        //private bool GetTertiaryRotationFactor(float left, float right)
-        //{
-        //    if (Math.Sign(left) != Math.Sign(right) && left != 0 && right != 0)
-        //    {
-        //        var absLeft = Math.Abs(left);
-        //        var absRight = Math.Abs(right);
+        private int GetTertiaryRotationFactor(float left, float right)
+        {
+            if (Math.Sign(left) != Math.Sign(right) && left != 0 && right != 0)
+            {
+                var absLeft = Math.Abs(left);
+                var absRight = Math.Abs(right);
 
-        //        var greater = (absLeft > absRight ? left : right);
-        //        var lesser = (absLeft < absRight ? left : right);
-        //    }
+                var greater = (absLeft > absRight ? left : right);
+                var lesser = (absLeft < absRight ? left : right);
 
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //}
+                if (greater > 0)
+                {
+                    return 180;
+                }
+
+                else
+                {
+                    return 0;
+                }
+            }
+
+            else
+            {
+                return 0;
+            }
+        }
 
         private float GetTravelDistance(float wheelSpeed)
         {

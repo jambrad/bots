@@ -28,10 +28,6 @@ namespace Bot
 
         private void Refresher_Tick(object sender, EventArgs e)
         {
-            //myBot.Move(.45f, -.48f);
-            //myBot.Move(.48f, -.45f);
-            //myBot.Move(-.45f, .48f);
-            //myBot.Move(-.48f, .45f);
             myBot.Move(LeftValue, RightValue);
             Field.Refresh();
         }
@@ -39,11 +35,18 @@ namespace Bot
         private void LeftBar_Scroll(object sender, EventArgs e)
         {
             LeftValue = (LeftBar.Value / (float)LeftBar.Maximum);
+            //printLeftRightValues();
         }
 
         private void RightBar_Scroll(object sender, EventArgs e)
         {
             RightValue = (RightBar.Value / (float)RightBar.Maximum);
+            //printLeftRightValues();
+        }
+
+        private void printLeftRightValues()
+        {
+            Console.WriteLine("(" + LeftValue + ", " + RightValue + ")");
         }
 
         private void Field_Paint(object sender, PaintEventArgs e)
