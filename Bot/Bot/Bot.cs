@@ -57,6 +57,8 @@ namespace Bot
             {
                 if (left == right)
                 {
+                    recentTurningPoint = Center;
+
                     // passing left or right doesn't matter
                     // they're both equal in speed
                     StraightMove(left);
@@ -65,6 +67,8 @@ namespace Bot
                 else
                 {
                     var rotationFactor = GetPrimaryRotationFactor(left, right);
+
+                    recentTurningPoint = Center;
 
                     // passing left or right doesn't matter
                     // they're both equal in speed
