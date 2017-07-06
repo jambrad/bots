@@ -30,6 +30,8 @@ namespace Bot
             frontPen = new Pen(Color.Red);
             turningPen = new Pen(Color.Blue);
 
+            recentTurningPoint = Center;
+
             maxSpeed = MAX_DISTANCE_PER_SECOND * (interval / 1000f);
         }
 
