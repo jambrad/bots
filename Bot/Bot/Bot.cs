@@ -11,6 +11,7 @@ namespace Bot
         private const float TURN_RATE = 10f;
 
         private readonly float maxSpeed;
+        private readonly float cornerDistance;
 
 
         // primary constructor
@@ -23,7 +24,6 @@ namespace Bot
 
             // bot dimensions
             Size = new SizeF(LENGTH, LENGTH);
-            Boundaries = new RectangleF(Anchor, Size);
 
             // bot pen
             boundaryPen = new Pen(Color.Black);
@@ -33,6 +33,7 @@ namespace Bot
             recentTurningPoint = Center;
 
             maxSpeed = MAX_DISTANCE_PER_SECOND * (interval / 1000f);
+            cornerDistance = (float)Math.Sqrt((Math.Pow(Size.Width / 2, 2) + Math.Pow(Size.Height / 2, 2)));
         }
 
         // default constructor
@@ -42,7 +43,7 @@ namespace Bot
         // draw the object
         public void Draw(PaintEventArgs e)
         {
-            e.Graphics.DrawEllipse(boundaryPen, Boundaries);
+            DrawBoundary(e);
 
             var frontPoint = FindPointFromCenter(Angle, Radius);
             var frontLine = new PointF[] { frontPoint, Center };
@@ -50,6 +51,24 @@ namespace Bot
 
             e.Graphics.DrawLines(frontPen, frontLine);
             e.Graphics.DrawLines(turningPen, turningLine);
+        }
+
+        public void DrawBoundary(PaintEventArgs e)
+        {
+            var cornerAngle = new Angle(Angle.Degree + 45);
+
+            var cornerPoints = new PointF[5];
+
+            cornerPoints[0] = FindPointFromCenter(cornerAngle, cornerDistance);
+
+            for (int i = 1; i < 5; i++)
+            {
+                cornerAngle = new Angle(cornerAngle.Degree - 90);
+
+                cornerPoints[i] = FindPointFromCenter(cornerAngle, cornerDistance);
+            }
+
+            e.Graphics.DrawLines(boundaryPen, cornerPoints);
         }
 
         // update location and direction of the bot
@@ -246,9 +265,6 @@ namespace Bot
             Anchor = new PointF(newCenter.X - Radius, newCenter.Y - Radius);
 
             Center = newCenter;
-
-            boundaries.X = Anchor.X;
-            boundaries.Y = Anchor.Y;
         }
 
 
@@ -277,25 +293,11 @@ namespace Bot
             }
         }
 
-        public RectangleF Boundaries
-        {
-            get
-            {
-                return boundaries;
-            }
-
-            private set
-            {
-                boundaries = value;
-            }
-        }
-
 
         private Pen boundaryPen;
         private Pen frontPen;
         private Pen turningPen;
-
-        private RectangleF boundaries;
+        
         private PointF recentTurningPoint;
     }
 }
