@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bot
+namespace Robot
 {
     class Angle
     {

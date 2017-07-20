@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Bot</RootNamespace>
     <AssemblyName>Bot</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -47,17 +48,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Angle.cs" />
-    <Compile Include="Bot.cs" />
-    <Compile Include="BotField.cs">
+    <Compile Include="FuzzySet.cs" />
+    <Compile Include="Robot.cs" />
+    <Compile Include="SoccerField.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BotField.Designer.cs">
-      <DependentUpon>BotField.cs</DependentUpon>
+    <Compile Include="SoccerField.Designer.cs">
+      <DependentUpon>SoccerField.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="BotField.resx">
-      <DependentUpon>BotField.cs</DependentUpon>
+    <EmbeddedResource Include="SoccerField.resx">
+      <DependentUpon>SoccerField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -67,6 +69,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

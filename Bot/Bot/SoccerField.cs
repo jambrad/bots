@@ -2,27 +2,29 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Bot
+namespace Robot
 {
-    public partial class BotField : Form
+    public partial class SoccerField : Form
     {
-        public BotField()
+        public SoccerField()
         {
             InitializeComponent();
         }
 
         private void BotField_Load(object sender, EventArgs e)
         {
-            myBot = new Bot(Field.Width / 2, Field.Height / 2, Refresher.Interval);
+            myBot = new Robot(Field.Width / 2, Field.Height / 2, Refresher.Interval);
 
             myPen = new Pen(Color.Black);
 
             testPen = new Pen(Color.Red, 5);
+
+            
         }
 
         private void Refresher_Tick(object sender, EventArgs e)
         {
-            myBot.Move(LeftValue, RightValue);
+            myBot.moveRobot(LeftValue, RightValue);
             Field.Refresh();
         }
 
@@ -45,10 +47,11 @@ namespace Bot
 
         private void Field_Paint(object sender, PaintEventArgs e)
         {
-            myBot.Draw(e);
+            CreateGraphics().SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            myBot.draw(e);
         }
 
-        private Bot myBot;
+        private Robot myBot;
 
         private Pen myPen;
         private Pen testPen;
