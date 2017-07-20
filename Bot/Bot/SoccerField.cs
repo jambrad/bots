@@ -9,6 +9,10 @@ namespace Robot
         public SoccerField()
         {
             InitializeComponent();
+            FuzzySet s = new FuzzySet();
+            s.Set("Very Near", 0, 0, 1, 70, 1, 70, 1, 90, 0);
+            s.Print();
+            Console.WriteLine("MEMBERSHIP: " + s.membership(85));
         }
 
         private void BotField_Load(object sender, EventArgs e)

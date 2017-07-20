@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bot
+namespace Robot
 {
     //Class holding the details of a FuzzySet
     class FuzzySet
@@ -59,16 +59,16 @@ namespace Bot
                 tempY[n] = y3;
                 ++n;
             }
-
-            x = new double[n];
-            y = new double[n];
+         
+            x = new double[n+1];
+            y = new double[n+1];
 
             if (x == null)
             {
                 n = 0;
                 return;
             }
-
+            Console.WriteLine("X >> " + x.Length);
             tempX.CopyTo(x, 0);
             tempY.CopyTo(y, 0);
             

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bot
+namespace Robot
 {
     class FuzzyEngineLeft
     {
@@ -53,6 +53,7 @@ namespace Bot
         private void Initialize()
         {
             InitializeFAM();
+            InitializeFuzzySet();
 
             
 
@@ -151,12 +152,49 @@ namespace Bot
             //Distance
             DistanceSet[(int)DISTANCE.VERY_NEAR].Set("Very Near", 0, 0, 1, 70, 1, 70, 1, 90, 0);
             DistanceSet[(int)DISTANCE.NEAR].Set("Near", 1, 80, 0, 196, 1, 196, 1, 312, 0);
-            DistanceSet[(int)DISTANCE.MEDIUM].Set("MEDIUM", 2, 240, 0, 380, 1, 380, 1, 400, 0);
-            DistanceSet[(int)DISTANCE.FAR].Set("FAR", 3, 390, 0, 70, 1, 70, 1, 90, 0);
+            DistanceSet[(int)DISTANCE.MEDIUM].Set("Medium", 2, 240, 0, 380, 1, 380, 1, 400, 0);
+            DistanceSet[(int)DISTANCE.FAR].Set("Far", 3, 390, 0, 445, 1, 445, 1, 500, 0);
+            DistanceSet[(int)DISTANCE.VERY_FAR].Set("Very Far", 4, 470, 0, 624, 1, 700, 1, 780, 1);
+
+            //Speed
+            SpeedSet[(int)SPEED.VERY_SLOW].Set("Very Slow", 0, 0, 1, 0.1, 1, 0.1, 1, 0.2, 0);
+            SpeedSet[(int)SPEED.SLOW].Set("Slow",1 , 0.15, 0, 0.275, 1, 0.275, 1, 0.4, 0);
+            SpeedSet[(int)SPEED.AVERAGE].Set("Average", 2, 0.35, 0, 0.5, 1, 0.5, 1, 0.65, 0);
+            SpeedSet[(int)SPEED.FAST].Set("Fast", 3, 0.6, 0, 0.725, 1, 0.725, 1, 0.85, 0);
+            SpeedSet[(int)SPEED.VERY_FAST].Set("Very Fast", 4, 0.8, 0, 0.9, 1, 0.9, 1, 1, 1);   
 
 
         }
 
+
+        public double getEngineOutput(double input_angle, double input_distance){
+            int i,j;
+	        double area,centroid,numerator=0,denominator=0,minimum=0.0;
+            
+            for(i = 0; i < NUM_ANGLE_SET; i++){
+                for(j = 0; j < NUM_DISTANCE_SET; j++){
+                    
+                    minimum = Util.min(AngleSet[i].membership(input_angle), DistanceSet[j].membership(input_distance));
+
+                    if (minimum != 0)
+                    {
+                        FuzzySet speed =  SpeedSet[SPEED_FAM[AngleSet[i].index][DistanceSet[j].index]];
+                        
+                        area = speed.Area(minimum);
+
+                        centroid = speed.CenterOfArea(minimum);
+
+                        numerator += (area * centroid);
+                        denominator += area;
+                    }
+                }
+            }
+
+            if (denominator == 0.0)
+                return 0.0;
+            else
+                return numerator / denominator;
+        }
         
         
     }
