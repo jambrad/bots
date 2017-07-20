@@ -12,7 +12,7 @@ namespace Bot
         //Linguistic Name
         private String name {get; set;}
         //Linguistic Index
-        private int index { get; set; }
+        public int index { get; set; }
         //Number of points in the function
         private int n { get; set; }
         //Array of the x-point values
@@ -26,6 +26,7 @@ namespace Bot
             y = null;
         }
 
+       //Sets the values to a a fuzzy set
         public void Set(String name, int index, double x0, double y0, double x1, double y1,
             double x2, double y2, double x3, double y3)
         {
@@ -73,6 +74,7 @@ namespace Bot
             
         }
 
+        //gets the level of membership of a point in this FuzzySet
         public double membership(double point)
         {
             int low, mid, high;
@@ -106,5 +108,38 @@ namespace Bot
             tempY = (point - x[high - 1]) / (x[high] - x[high - 1]) * (y[high] - y[high - 1]);
             return tempY + y[high - 1];
         }
+
+        //Computes the area in a given point
+        public double Area(double mf)
+        {
+            if (n == 0)
+                return 0.0;
+            else if (n == 2 && (y[0] == 0 || y[0] == 1))
+                return 0.5 * mf * (x[1] - x[0]) * (2 - mf);
+            else
+                return 0.5 * mf * (x[2] - x[0]) * (2 - mf);
+        }
+
+        //Computes the centroid in a given point
+        public double CenterOfArea(double mf)
+        {
+            if (mf == 0)
+                return 0.0;
+            if (n == 2 && x[0] == 0)
+                return ((1 - mf + mf * mf / 3) * (x[1]) / (2 - mf));
+            else if (n == 2)
+                return (mf * (x[0] + 2.0 / 3 * mf * (x[1] - x[0])) + 2 * (1 - mf) * (x[0] + 0.5 * (x[1] - x[0]) * (1 + mf))) / (2 - mf);
+            else
+                return x[1];
+        }
+
+
+        //returns the name of the fuzzySet
+        public String getLinguistic()
+        {
+            return name;
+        }
+
+        
     }
 }
