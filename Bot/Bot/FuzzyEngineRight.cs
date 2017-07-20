@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Robot
 {
-    class FuzzyEngineLeft
+    class FuzzyEngineRight
     {
         //constants
         private static int NUM_ANGLE_SET = 7;
@@ -41,16 +41,16 @@ namespace Robot
             VERY_LEFT
         }
 
-        enum DISTANCE 
+        enum DISTANCE
         {
-            VERY_NEAR ,
-            NEAR ,
-            MEDIUM ,
-            FAR ,
+            VERY_NEAR,
+            NEAR,
+            MEDIUM,
+            FAR,
             VERY_FAR
         }
 
-        public FuzzyEngineLeft()
+        public FuzzyEngineRight()
         {
             Initialize();
         }
@@ -60,7 +60,7 @@ namespace Robot
             InitializeFAM();
             InitializeFuzzySet();
 
-            
+
 
         }
 
@@ -68,31 +68,31 @@ namespace Robot
         private void InitializeFAM()
         {
             SPEED_FAM = new int[NUM_ANGLE_SET][];
-            for (int i = 0; i < NUM_ANGLE_SET; i++ )
+            for (int i = 0; i < NUM_ANGLE_SET; i++)
             {
                 SPEED_FAM[i] = new int[NUM_DISTANCE_SET];
             }
 
             // VERY RIGHT row
-            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.SLOW;
-            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.NEAR] = (int)SPEED.AVERAGE;
-            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.MEDIUM] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.FAR] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.VERY_FAR] = (int)SPEED.VERY_FAST;
+            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.NEAR] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.MEDIUM] = (int)SPEED.AVERAGE;
+            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.FAR] = (int)SPEED.AVERAGE;
+            SPEED_FAM[(int)ANGLE.VERY_RIGHT][(int)DISTANCE.VERY_FAR] = (int)SPEED.FAST;
 
             // RIGHT row
-            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.SLOW;
-            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.NEAR] = (int)SPEED.AVERAGE;
-            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.MEDIUM] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.FAR] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.VERY_FAR] = (int)SPEED.VERY_FAST;
+            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.NEAR] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.MEDIUM] = (int)SPEED.SLOW;
+            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.FAR] = (int)SPEED.SLOW;
+            SPEED_FAM[(int)ANGLE.RIGHT][(int)DISTANCE.VERY_FAR] = (int)SPEED.AVERAGE;
 
             // SLIGHTLY RIGHT row
             SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
-            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.NEAR] = (int)SPEED.SLOW;
-            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.MEDIUM] = (int)SPEED.AVERAGE;
-            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.FAR] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.VERY_FAR] = (int)SPEED.VERY_FAST;
+            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.NEAR] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.MEDIUM] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.FAR] = (int)SPEED.AVERAGE;
+            SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.VERY_FAR] = (int)SPEED.FAST;
 
             // FRONT row
             SPEED_FAM[(int)ANGLE.FRONT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
@@ -103,25 +103,25 @@ namespace Robot
 
             // SLIGHTLY LEFT row
             SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
-            SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.NEAR] = (int)SPEED.VERY_SLOW;
-            SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.MEDIUM] = (int)SPEED.AVERAGE;
+            SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.NEAR] = (int)SPEED.SLOW;
+            SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.MEDIUM] = (int)SPEED.FAST;
             SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.FAR] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.VERY_FAR] = (int)SPEED.FAST;
+            SPEED_FAM[(int)ANGLE.SLIGHTLY_LEFT][(int)DISTANCE.VERY_FAR] = (int)SPEED.VERY_FAST;
 
             // LEFT row
-            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
-            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.NEAR] = (int)SPEED.VERY_SLOW;
-            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.MEDIUM] = (int)SPEED.SLOW;
+            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.SLOW;
+            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.NEAR] = (int)SPEED.AVERAGE;
+            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.MEDIUM] = (int)SPEED.FAST;
             SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.FAR] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.VERY_FAR] = (int)SPEED.AVERAGE;
+            SPEED_FAM[(int)ANGLE.LEFT][(int)DISTANCE.VERY_FAR] = (int)SPEED.VERY_FAST;
 
             // VERY LEFT row
-            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
-            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.NEAR] = (int)SPEED.VERY_SLOW;
-            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.MEDIUM] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.SLOW;
+            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.NEAR] = (int)SPEED.AVERAGE;
+            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.MEDIUM] = (int)SPEED.AVERAGE;
             SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.FAR] = (int)SPEED.FAST;
-            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.VERY_FAR] = (int)SPEED.FAST;
-            
+            SPEED_FAM[(int)ANGLE.VERY_LEFT][(int)DISTANCE.VERY_FAR] = (int)SPEED.VERY_FAST;
+
         }
 
         private void InitializeFuzzySet()
@@ -163,28 +163,31 @@ namespace Robot
 
             //Speed
             SpeedSet[(int)SPEED.VERY_SLOW].Set("Very Slow", 0, 0, 1, 0.1, 1, 0.1, 1, 0.2, 0);
-            SpeedSet[(int)SPEED.SLOW].Set("Slow",1 , 0.15, 0, 0.275, 1, 0.275, 1, 0.4, 0);
+            SpeedSet[(int)SPEED.SLOW].Set("Slow", 1, 0.15, 0, 0.275, 1, 0.275, 1, 0.4, 0);
             SpeedSet[(int)SPEED.AVERAGE].Set("Average", 2, 0.35, 0, 0.5, 1, 0.5, 1, 0.65, 0);
             SpeedSet[(int)SPEED.FAST].Set("Fast", 3, 0.6, 0, 0.725, 1, 0.725, 1, 0.85, 0);
-            SpeedSet[(int)SPEED.VERY_FAST].Set("Very Fast", 4, 0.8, 0, 0.9, 1, 0.9, 1, 1, 1);   
+            SpeedSet[(int)SPEED.VERY_FAST].Set("Very Fast", 4, 0.8, 0, 0.9, 1, 0.9, 1, 1, 1);
 
 
         }
 
 
-        public double getEngineOutput(double input_angle, double input_distance){
-            int i,j;
-	        double area,centroid,numerator=0,denominator=0,minimum=0.0;
-            
-            for(i = 0; i < NUM_ANGLE_SET; i++){
-                for(j = 0; j < NUM_DISTANCE_SET; j++){
-                    
+        public double getEngineOutput(double input_angle, double input_distance)
+        {
+            int i, j;
+            double area, centroid, numerator = 0, denominator = 0, minimum = 0.0;
+
+            for (i = 0; i < NUM_ANGLE_SET; i++)
+            {
+                for (j = 0; j < NUM_DISTANCE_SET; j++)
+                {
+
                     minimum = Util.min(AngleSet[i].membership(input_angle), DistanceSet[j].membership(input_distance));
 
                     if (minimum != 0)
                     {
-                        FuzzySet speed =  SpeedSet[SPEED_FAM[AngleSet[i].index][DistanceSet[j].index]];
-                        
+                        FuzzySet speed = SpeedSet[SPEED_FAM[AngleSet[i].index][DistanceSet[j].index]];
+
                         area = speed.Area(minimum);
 
                         centroid = speed.CenterOfArea(minimum);
@@ -200,7 +203,6 @@ namespace Robot
             else
                 return numerator / denominator;
         }
-        
-        
+       
     }
 }
