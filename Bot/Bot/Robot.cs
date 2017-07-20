@@ -13,10 +13,12 @@ namespace Robot
         private readonly float cornerDistance;
         private const float len = 45f;
 
+        private FuzzyEngine engine;
+
         
         public Robot(float x, float y, int intervals)
         {
-            
+            engine = new FuzzyEngine();
             anchor = new PointF(x - rad, y - rad);
             center = new PointF(x, y);
             angle = new Angle(90);
@@ -69,6 +71,12 @@ namespace Robot
 
             e.Graphics.DrawLines(edgePen, cornerPoints);
         }
+
+        public void moveRobot(double angle, double distance)
+        {
+            moveRobot(engine.LeftSpeed(angle, distance), engine.RightSpeed(angle, distance));
+        }
+
 
         
         public void moveRobot(float left, float right)
