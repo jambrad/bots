@@ -31,12 +31,14 @@ namespace Robot
         private void LeftBar_Scroll(object sender, EventArgs e)
         {
             LeftValue = (LeftBar.Value / (float)LeftBar.Maximum);
+            leftSpeed.Text = LeftValue + "";
             //printLeftRightValues();
         }
 
         private void RightBar_Scroll(object sender, EventArgs e)
         {
             RightValue = (RightBar.Value / (float)RightBar.Maximum);
+            rightSpeed.Text = RightValue + "";
             //printLeftRightValues();
         }
 

@@ -135,11 +135,29 @@ namespace Bot
 
 
         //returns the name of the fuzzySet
-        public String getLinguistic()
+        public String GetLinguistic()
         {
             return name;
         }
 
+        public void Print()
+        {
+            Console.WriteLine("Lingustic: {0} \n N: {1}", name, n);
+
+            Console.Write("X: [");
+            foreach (double xx in x)
+            {
+                Console.Write(xx + ", ");
+            }
+            Console.WriteLine("]");
+
+            Console.Write("Y: [");
+            foreach (double yy in y)
+            {
+                Console.Write(yy + ", ");
+            }
+            Console.WriteLine("]");
+        }
         
     }
 }

@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Angle.cs" />
+    <Compile Include="FuzzyEngineLeft.cs" />
     <Compile Include="FuzzySet.cs" />
     <Compile Include="Robot.cs" />
     <Compile Include="SoccerField.cs">
@@ -58,6 +59,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
     <EmbeddedResource Include="SoccerField.resx">
       <DependentUpon>SoccerField.cs</DependentUpon>
     </EmbeddedResource>

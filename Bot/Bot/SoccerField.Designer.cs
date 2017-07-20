@@ -35,6 +35,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.Field = new System.Windows.Forms.Panel();
             this.RightBar = new System.Windows.Forms.TrackBar();
+            this.leftSpeed = new System.Windows.Forms.Label();
+            this.rightSpeed = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.LeftBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.RightBar)).BeginInit();
             this.SuspendLayout();
@@ -48,7 +50,7 @@
             // LeftBar
             // 
             this.LeftBar.Location = new System.Drawing.Point(9, 459);
-            this.LeftBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LeftBar.Margin = new System.Windows.Forms.Padding(2);
             this.LeftBar.Maximum = 100;
             this.LeftBar.Minimum = -100;
             this.LeftBar.Name = "LeftBar";
@@ -84,7 +86,7 @@
             // 
             this.Field.BackColor = System.Drawing.Color.White;
             this.Field.Location = new System.Drawing.Point(9, 10);
-            this.Field.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Field.Margin = new System.Windows.Forms.Padding(2);
             this.Field.Name = "Field";
             this.Field.Size = new System.Drawing.Size(782, 445);
             this.Field.TabIndex = 7;
@@ -93,7 +95,7 @@
             // RightBar
             // 
             this.RightBar.Location = new System.Drawing.Point(9, 508);
-            this.RightBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.RightBar.Margin = new System.Windows.Forms.Padding(2);
             this.RightBar.Maximum = 100;
             this.RightBar.Minimum = -100;
             this.RightBar.Name = "RightBar";
@@ -102,22 +104,42 @@
             this.RightBar.TickFrequency = 10;
             this.RightBar.Scroll += new System.EventHandler(this.RightBar_Scroll);
             // 
-            // BotField
+            // leftSpeed
+            // 
+            this.leftSpeed.AutoSize = true;
+            this.leftSpeed.Location = new System.Drawing.Point(708, 465);
+            this.leftSpeed.Name = "leftSpeed";
+            this.leftSpeed.Size = new System.Drawing.Size(13, 13);
+            this.leftSpeed.TabIndex = 9;
+            this.leftSpeed.Text = "0";
+            // 
+            // rightSpeed
+            // 
+            this.rightSpeed.AutoSize = true;
+            this.rightSpeed.Location = new System.Drawing.Point(707, 515);
+            this.rightSpeed.Name = "rightSpeed";
+            this.rightSpeed.Size = new System.Drawing.Size(13, 13);
+            this.rightSpeed.TabIndex = 10;
+            this.rightSpeed.Text = "0";
+            // 
+            // SoccerField
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(802, 564);
+            this.Controls.Add(this.rightSpeed);
+            this.Controls.Add(this.leftSpeed);
             this.Controls.Add(this.RightBar);
             this.Controls.Add(this.LeftBar);
             this.Controls.Add(this.Field);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.DoubleBuffered = true;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "BotField";
+            this.Name = "SoccerField";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Roooboooot Soccah";
             this.Load += new System.EventHandler(this.BotField_Load);
@@ -136,6 +158,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel Field;
         private System.Windows.Forms.TrackBar RightBar;
+        private System.Windows.Forms.Label leftSpeed;
+        private System.Windows.Forms.Label rightSpeed;
     }
 }
 
