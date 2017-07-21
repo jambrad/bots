@@ -15,6 +15,11 @@ namespace Robot
 
         private FuzzyEngine engine;
 
+        private float x;
+        private float y;
+
+        
+        
         
         public Robot(float x, float y, int intervals)
         {
@@ -22,7 +27,10 @@ namespace Robot
             anchor = new PointF(x - rad, y - rad);
             center = new PointF(x, y);
             angle = new Angle(90);
+            front = new PointF(x + rad, y + rad);
 
+            this.x = x;
+            this.y = y;
             
             size = new SizeF(len, len);
 
@@ -74,7 +82,11 @@ namespace Robot
 
         public void moveRobot(double angle, double distance)
         {
-            moveRobot(engine.LeftSpeed(angle, distance), engine.RightSpeed(angle, distance));
+            var left = engine.LeftSpeed(angle, distance);
+            var right =  engine.RightSpeed(angle, distance);
+            //Console.WriteLine("Left: " + left + "    Right: " + right);
+
+            moveRobot(left,right);
         }
 
 
@@ -268,7 +280,7 @@ namespace Robot
         private void moveCenter(PointF newCenter)
         {
             anchor = new PointF(newCenter.X - rad, newCenter.Y - rad);
-
+            front = pointFromCenter(angle, rad);
             center = newCenter;
         }
 
@@ -276,6 +288,8 @@ namespace Robot
         public PointF anchor { get; private set; }
 
         public PointF center { get; private set; }
+
+        public PointF front { get; private set; }
 
         public SizeF size { get; private set; }
 
@@ -298,6 +312,16 @@ namespace Robot
             }
         }
 
+        public float Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+        public float X
+        {
+            get { return x; }
+            set { x = value; }
+        }
 
         private Pen edgePen;
         private Pen driverPen;

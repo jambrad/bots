@@ -68,7 +68,6 @@ namespace Robot
                 n = 0;
                 return;
             }
-            Console.WriteLine("X >> " + x.Length);
             tempX.CopyTo(x, 0);
             tempY.CopyTo(y, 0);
             

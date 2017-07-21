@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Angle.cs" />
+    <Compile Include="Ball.cs" />
     <Compile Include="FuzzyEngine.cs" />
     <Compile Include="FuzzyEngineLeft.cs" />
     <Compile Include="FuzzyEngineRight.cs" />

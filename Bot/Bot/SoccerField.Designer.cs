@@ -91,6 +91,7 @@
             this.Field.Size = new System.Drawing.Size(782, 445);
             this.Field.TabIndex = 7;
             this.Field.Paint += new System.Windows.Forms.PaintEventHandler(this.Field_Paint);
+            this.Field.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Field_MouseClick);
             // 
             // RightBar
             // 

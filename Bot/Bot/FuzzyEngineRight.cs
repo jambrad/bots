@@ -185,7 +185,9 @@ namespace Robot
                     minimum = Util.min(AngleSet[i].membership(input_angle), DistanceSet[j].membership(input_distance));
 
                     if (minimum != 0)
+
                     {
+                        //Console.WriteLine("RIGHTAngle: " + (ANGLE)i + "({0})" + "   Distance: " + (DISTANCE)j + "({1})", AngleSet[i].membership(input_angle), DistanceSet[j].membership(input_distance));
                         FuzzySet speed = SpeedSet[SPEED_FAM[AngleSet[i].index][DistanceSet[j].index]];
 
                         area = speed.Area(minimum);
