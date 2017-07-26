@@ -65,20 +65,20 @@ namespace Robot
 
         private float getDeltaY()
         {
-            return myBall.Y - myBot.front.Y;
+            return myBot.center.Y - myBall.Y;
         }
 
         private float getDeltaX()
         {
-            return myBall.X - myBot.front.X;
+            return myBot.center.X - myBall.X;
         }
 
         private double getDistance()
         {
             float tempX, tempY;
             double result;
-            tempX = (float) Math.Pow((myBall.X - myBot.front.X),2);
-            tempY = (float) Math.Pow((myBall.Y - myBot.front.Y),2);
+            tempX = (float) Math.Pow((myBall.X - myBot.center.X),2);
+            tempY = (float) Math.Pow((myBall.Y - myBot.center.Y),2);
             result = Math.Sqrt(tempX + tempY);
 
             return result;
@@ -120,19 +120,19 @@ namespace Robot
             {
                 orientation = 4;
             }
-            else if (deltaX == 0 && (myBall.Y < myBot.front.Y))
+            else if (deltaX == 0 && (myBall.Y < myBot.center.Y))
             {
                 orientation = 5;
             }
-            else if (deltaX == 0 && (myBall.Y > myBot.front.Y))
+            else if (deltaX == 0 && (myBall.Y > myBot.center.Y))
             {
                 orientation = 7;
             }
-            else if (deltaY == 0 && (myBall.X < myBot.front.X))
+            else if (deltaY == 0 && (myBall.X < myBot.center.X))
             {
                 orientation = 6;
             }
-            else if (deltaY == 0 && (myBall.X > myBot.front.X))
+            else if (deltaY == 0 && (myBall.X > myBot.center.X))
             {
                 orientation = 8;
             }
@@ -144,7 +144,7 @@ namespace Robot
             return orientation;
         }
 
-        public float getRelativeAngle()
+        /*public float getRelativeAngle()
         {
             int orientation = getOrientation();
             Console.Write("Orientation: " + orientation + "    ");
@@ -154,16 +154,16 @@ namespace Robot
             switch (orientation)
             {
                 case 1:
-                    result = angle;
+                    result = 90 - angle;
                     break;
                 case 2:
                     result = angle + 90;
                     break;
                 case 3:
-                    result = angle + 180;
+                    result = (90 - angle) + 180;
                     break;
                 case 4:
-                    result = (angle - 90);
+                    result = (angle + 270);
                     break;
                 case 5:
                     result = 90;
@@ -182,12 +182,61 @@ namespace Robot
                     break;
             }
             return result;
+        }*/
+
+        public double getRelativeAngle()
+        {
+            // if the same x
+            if (myBot.center.X == myBall.X)
+            {
+                if (myBot.center.Y > myBall.Y)
+                {
+                    return 270;
+                }
+                else if (myBot.center.Y < myBall.Y)
+                {
+                    return 90;
+                }
+            }
+
+            var orientation = (double)(myBot.center.X < myBall.X ? 0 : 180);
+
+            var deltaX = getDeltaX();
+            var deltaY = getDeltaY();
+
+            var angle = Math.Atan(deltaY / deltaX);
+
+            var result = (angle * 180 / Math.PI);
+            Console.Write("result: {0} >>> ", result);
+            result = (orientation - result);
+
+
+            return result;
+            
         }
 
         public double getFinalAngle()
         {
+            var ra = getRelativeAngle();
+            Console.Write("Relative: {0}   Bot:  {1}  ", ra, myBot.angle.Degree);
 
-            return -(myBot.angle.Degree - getRelativeAngle());
+            var fa = -(myBot.angle.Degree - ra);
+            while ((fa < 0) || (fa >= 360))
+            {
+                if (fa < 0)
+                {
+                    fa += 360;
+                }
+                else
+                {
+                    fa -= 360;
+                }
+            }
+            if (fa > 180)
+            {
+                fa = -(fa - 180);
+            }
+            return fa;
         }
 
         private Robot myBot;
