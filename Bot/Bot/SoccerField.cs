@@ -24,7 +24,7 @@ namespace Robot
 
             testPen = new Pen(Color.Red, 5);
 
-            myBall = new Ball((Field.Width / 2) + 200, (Field.Height / 2) + 200, 15, 15);
+            myBall = new Ball((Field.Width / 2) + 200, (Field.Height / 2) + 200, 30, 30);
 
             typeof(Panel).InvokeMember("DoubleBuffered",
                 System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
@@ -36,33 +36,17 @@ namespace Robot
             
         }
 
-        private void setRect()
-        {
-            botRect.X = myBot.center.X;
-            botRect.Y = myBot.center.Y;
-            botRect.Height = myBot.len/2;
-            botRect.Width = myBot.len/2;
-
-            ballRect.X = myBall.X;
-            ballRect.Y = myBall.Y;
-            ballRect.Height = 15;
-            ballRect.Width = 15;
-
-            Console.Write(botRect.ToString());
-
-        }
-
-        private void drawRects(PaintEventArgs e)
-        {
-            Graphics g = this.CreateGraphics();
-            Pen pen = new Pen(Color.Red);
-            e.Graphics.DrawRectangle(pen, botRect.X, botRect.Y, botRect.Width, botRect.Height);
-            e.Graphics.DrawRectangle(pen, ballRect.X, ballRect.Y, ballRect.Width, ballRect.Height);
-        }
-
+      
         private bool isCollide()
         {
-            return botRect.IntersectsWith(ballRect);
+            PointF[] points = myBot.getFrontPoints();
+            var A = points[0];
+            var B = points[1];
+            var C = new PointF((float)myBall.X, (float)myBall.Y);
+
+            return myBall.isCollideWithBot(A, B, C);
+           //return myBall.isCollideWithBot(myBot.getFrontPoints());
+            
         }
         private void Refresher_Tick(object sender, EventArgs e)
         {
@@ -70,12 +54,19 @@ namespace Robot
             var angle = getFinalAngle();
             //Console.WriteLine("angle: " + angle);
             myBot.moveRobot(angle, getDistance());
-
-            setRect();
+            if (isCollide())
+            {
+                myBall.brush = new SolidBrush(Color.LightGreen);
+            }
+            else
+            {
+                myBall.brush = new SolidBrush(Color.DarkRed);
+            }
+           
             
             Field.Refresh();
 
-            Console.WriteLine("Collision: {0}", isCollide());
+            
         }
 
      
@@ -84,7 +75,9 @@ namespace Robot
             CreateGraphics().SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             myBot.draw(e);
             myBall.draw(e);
-            drawRects(e);
+            /*if(myBot.isFrontingBall())
+                projectBallToFront(e);
+             * */
         }
 
         private float getDeltaY()
@@ -161,6 +154,23 @@ namespace Robot
                 fa = -(fa - 180);
             }
             return fa;
+        }
+
+        public void projectBallToFront(PaintEventArgs e)
+        {
+            PointF[] frontPoints = myBot.getFrontPoints();
+            var Ax = frontPoints[0].X;
+            var Ay = frontPoints[0].Y;
+            var Bx = frontPoints[1].X;
+            var By = frontPoints[1].Y;
+            var Cx = myBall.X;
+            var Cy = myBall.Y;
+            var t =((Cx-Ax)*(Bx-Ax)+(Cy-Ay)*(By-Ay))/(Math.Pow((Bx-Ax),2)+Math.Pow((By-Ay),2));
+            var Dx = Ax + t*(Bx - Ax);
+            var Dy = Ay + t*(By - Ay);
+
+            e.Graphics.DrawLine(new Pen(Color.LightGreen), (float)Dx, (float)Dy, (float)Cx, (float)Cy);
+            
         }
 
         private Robot myBot;

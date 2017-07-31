@@ -11,10 +11,12 @@ namespace Robot
         private const float max_distance = 300f; 
         private const float turn_rate = 10f;
         private readonly float cornerDistance;
+        public PointF[] cornerPoints;
         public readonly float len = 45f;
 
         private FuzzyEngine engine;
-
+        private float leftSpeed;
+        private float rightSpeed;
         private float x;
         private float y;
 
@@ -33,6 +35,9 @@ namespace Robot
             this.y = y;
             
             size = new SizeF(len, len);
+
+            leftSpeed = 0;
+            rightSpeed = 0;
 
             
             edgePen = new Pen(Color.Blue,3);
@@ -59,34 +64,47 @@ namespace Robot
             var turningLine = new PointF[] { pastTurningPoint, center };
 
             e.Graphics.DrawLines(driverPen, frontLine);
-            e.Graphics.DrawLines(turnPen, turningLine);
+            //e.Graphics.DrawLines(turnPen, turningLine);
         }
 
         public void drawBound(PaintEventArgs e)
         {
             var cornerAngle = new Angle(angle.Degree + 45);
 
-            var cornerPoints = new PointF[5];
+           cornerPoints = new PointF[5];
 
             cornerPoints[0] = pointFromCenter(cornerAngle, cornerDistance);
+           
 
             for (int i = 1; i < 5; i++)
             {
                 cornerAngle = new Angle(cornerAngle.Degree - 90);
 
                 cornerPoints[i] = pointFromCenter(cornerAngle, cornerDistance);
+                
             }
-
+           
             e.Graphics.DrawLines(edgePen, cornerPoints);
+            
         }
 
         public void moveRobot(double angle, double distance)
         {
-            var left = engine.LeftSpeed(angle, distance);
-            var right =  engine.RightSpeed(angle, distance);
+            leftSpeed = engine.LeftSpeed(angle, distance);
+            rightSpeed =  engine.RightSpeed(angle, distance);
             //Console.WriteLine("Left: " + left + "    Right: " + right);
 
-            moveRobot(left,right);
+            moveRobot(leftSpeed,rightSpeed);
+        }
+
+        public PointF[] getFrontPoints()
+        {
+            return new PointF[] { cornerPoints[1], cornerPoints[4] };
+        }
+
+        public bool isFrontingBall()
+        {
+            return (rightSpeed == leftSpeed);
         }
 
 
