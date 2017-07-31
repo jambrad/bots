@@ -7,6 +7,8 @@ namespace Robot
 {
     public partial class SoccerField : Form
     {
+        public RectangleF botRect;
+        public RectangleF ballRect;
         public SoccerField()
         {
             InitializeComponent();
@@ -24,43 +26,65 @@ namespace Robot
 
             myBall = new Ball((Field.Width / 2) + 200, (Field.Height / 2) + 200, 15, 15);
 
-           
+            typeof(Panel).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+                null, Field, new object[] { true });
+
+            botRect = new RectangleF();
+            ballRect = new RectangleF();
            
             
         }
 
+        private void setRect()
+        {
+            botRect.X = myBot.center.X;
+            botRect.Y = myBot.center.Y;
+            botRect.Height = myBot.len/2;
+            botRect.Width = myBot.len/2;
+
+            ballRect.X = myBall.X;
+            ballRect.Y = myBall.Y;
+            ballRect.Height = 15;
+            ballRect.Width = 15;
+
+            Console.Write(botRect.ToString());
+
+        }
+
+        private void drawRects(PaintEventArgs e)
+        {
+            Graphics g = this.CreateGraphics();
+            Pen pen = new Pen(Color.Red);
+            e.Graphics.DrawRectangle(pen, botRect.X, botRect.Y, botRect.Width, botRect.Height);
+            e.Graphics.DrawRectangle(pen, ballRect.X, ballRect.Y, ballRect.Width, ballRect.Height);
+        }
+
+        private bool isCollide()
+        {
+            return botRect.IntersectsWith(ballRect);
+        }
         private void Refresher_Tick(object sender, EventArgs e)
         {
+            
             var angle = getFinalAngle();
-            Console.WriteLine("angle: " + angle);
+            //Console.WriteLine("angle: " + angle);
             myBot.moveRobot(angle, getDistance());
+
+            setRect();
+            
             Field.Refresh();
+
+            Console.WriteLine("Collision: {0}", isCollide());
         }
 
-        private void LeftBar_Scroll(object sender, EventArgs e)
-        {
-            LeftValue = (LeftBar.Value / (float)LeftBar.Maximum);
-            leftSpeed.Text = LeftValue + "";
-            //printLeftRightValues();
-        }
-
-        private void RightBar_Scroll(object sender, EventArgs e)
-        {
-            RightValue = (RightBar.Value / (float)RightBar.Maximum);
-            rightSpeed.Text = RightValue + "";
-            //printLeftRightValues();
-        }
-
-        private void printLeftRightValues()
-        {
-            Console.WriteLine("(" + LeftValue + ", " + RightValue + ")");
-        }
-
+     
         private void Field_Paint(object sender, PaintEventArgs e)
         {
             CreateGraphics().SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             myBot.draw(e);
             myBall.draw(e);
+            drawRects(e);
         }
 
         private float getDeltaY()
@@ -83,106 +107,6 @@ namespace Robot
 
             return result;
         }
-
-        public double findAngle()
-        {
-            float result;
-            float deltaY = getDeltaY();
-            float deltaX = getDeltaX();
-            result = (float)Math.Asin(deltaX / getDistance());
-            double deg = (result * 180 / Math.PI);
-            //myBot.robotAngle = new Angle(result);
-           
-            //Console.WriteLine("result: " + deg);
-            return deg;
-        }
-
-        public int getOrientation()
-        {
-            float deltaX = getDeltaX();
-            float deltaY = getDeltaY();
-            Console.Write("deltaX: {0}   deltaY: {1}", deltaX, deltaY);
-            int orientation = 0;
-
-            if (deltaX > 0 && deltaY < 0)
-            {
-                orientation = 1;
-            }
-            else if (deltaX < 0 && deltaY < 0)
-            {
-                orientation = 2;
-            }
-            else if (deltaX < 0 && deltaY > 0)
-            {
-                orientation = 3;
-            }
-            else if (deltaX > 0 && deltaY > 0)
-            {
-                orientation = 4;
-            }
-            else if (deltaX == 0 && (myBall.Y < myBot.center.Y))
-            {
-                orientation = 5;
-            }
-            else if (deltaX == 0 && (myBall.Y > myBot.center.Y))
-            {
-                orientation = 7;
-            }
-            else if (deltaY == 0 && (myBall.X < myBot.center.X))
-            {
-                orientation = 6;
-            }
-            else if (deltaY == 0 && (myBall.X > myBot.center.X))
-            {
-                orientation = 8;
-            }
-            else if (deltaX == 0 && deltaY == 0)
-            {
-                orientation = 9;
-            }
-
-            return orientation;
-        }
-
-        /*public float getRelativeAngle()
-        {
-            int orientation = getOrientation();
-            Console.Write("Orientation: " + orientation + "    ");
-            float result, angle;
-            angle = (float)Math.Abs(findAngle());
-
-            switch (orientation)
-            {
-                case 1:
-                    result = 90 - angle;
-                    break;
-                case 2:
-                    result = angle + 90;
-                    break;
-                case 3:
-                    result = (90 - angle) + 180;
-                    break;
-                case 4:
-                    result = (angle + 270);
-                    break;
-                case 5:
-                    result = 90;
-                    break;
-                case 6:
-                    result = 180;
-                    break;
-                case 7:
-                    result = 270;
-                    break;
-                case 8:
-                    result = 360;
-                    break;
-                default:
-                    result = 0;
-                    break;
-            }
-            return result;
-        }*/
 
         public double getRelativeAngle()
         {
@@ -207,7 +131,7 @@ namespace Robot
             var angle = Math.Atan(deltaY / deltaX);
 
             var result = (angle * 180 / Math.PI);
-            Console.Write("result: {0} >>> ", result);
+            //Console.Write("result: {0} >>> ", result);
             result = (orientation - result);
 
 
@@ -218,7 +142,7 @@ namespace Robot
         public double getFinalAngle()
         {
             var ra = getRelativeAngle();
-            Console.Write("Relative: {0}   Bot:  {1}  ", ra, myBot.angle.Degree);
+            //Console.Write("Relative: {0}   Bot:  {1}  ", ra, myBot.angle.Degree);
 
             var fa = -(myBot.angle.Degree - ra);
             while ((fa < 0) || (fa >= 360))

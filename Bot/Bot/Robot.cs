@@ -8,10 +8,10 @@ namespace Robot
     {
 
         private readonly float maxSpeed;
-        private const float max_distance = 200f; 
+        private const float max_distance = 300f; 
         private const float turn_rate = 10f;
         private readonly float cornerDistance;
-        private const float len = 45f;
+        public readonly float len = 45f;
 
         private FuzzyEngine engine;
 
