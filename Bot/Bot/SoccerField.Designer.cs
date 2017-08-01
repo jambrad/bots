@@ -42,10 +42,12 @@
             // Field
             // 
             this.Field.BackColor = System.Drawing.Color.White;
-            this.Field.Location = new System.Drawing.Point(9, 10);
+            this.Field.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Field.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Field.Location = new System.Drawing.Point(0, 0);
             this.Field.Margin = new System.Windows.Forms.Padding(2);
             this.Field.Name = "Field";
-            this.Field.Size = new System.Drawing.Size(782, 543);
+            this.Field.Size = new System.Drawing.Size(993, 564);
             this.Field.TabIndex = 7;
             this.Field.Paint += new System.Windows.Forms.PaintEventHandler(this.Field_Paint);
             this.Field.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Field_MouseClick);
@@ -55,7 +57,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(802, 564);
+            this.ClientSize = new System.Drawing.Size(993, 564);
             this.Controls.Add(this.Field);
             this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(2);

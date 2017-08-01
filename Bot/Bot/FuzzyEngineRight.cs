@@ -95,7 +95,7 @@ namespace Robot
             SPEED_FAM[(int)ANGLE.SLIGHTLY_RIGHT][(int)DISTANCE.VERY_FAR] = (int)SPEED.FAST;
 
             // FRONT row
-            SPEED_FAM[(int)ANGLE.FRONT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.VERY_SLOW;
+            SPEED_FAM[(int)ANGLE.FRONT][(int)DISTANCE.VERY_NEAR] = (int)SPEED.AVERAGE;
             SPEED_FAM[(int)ANGLE.FRONT][(int)DISTANCE.NEAR] = (int)SPEED.AVERAGE;
             SPEED_FAM[(int)ANGLE.FRONT][(int)DISTANCE.MEDIUM] = (int)SPEED.FAST;
             SPEED_FAM[(int)ANGLE.FRONT][(int)DISTANCE.FAR] = (int)SPEED.FAST;

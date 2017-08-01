@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Bot
+namespace Robot
 {
     class Ball
     {
@@ -17,8 +17,15 @@ namespace Bot
         public Brush brush;
         private float radius;
         private float speed;
+        private float max_speed;
+        private float max_distance;
+        private float friction;
+        private int status; // 0 - stationary  1 - moving
+        private float timeStep;
+        private Angle direction;
+        public PointF center;
 
-        public Ball(int x, int y, int width, int height)
+        public Ball(int x, int y, int width, int height, int intervals)
         {
             this.x = x;
             this.y = y;
@@ -26,7 +33,17 @@ namespace Bot
             this.height = height;
             this.radius = width / 2;
             this.speed = 0;
+            this.friction = .999f;
+            this.status = 0;
+            this.direction = null;
+            this.max_distance = 350f;
+            this.max_speed = max_distance * (intervals / 1000f);
+
+            this.timeStep = (intervals );
+            setCenter(new PointF(x, y));
             brush = new SolidBrush(Color.DarkRed);
+
+
         }
 
         public Ball()
@@ -40,7 +57,27 @@ namespace Bot
 
         public void draw(PaintEventArgs e)
         {
-            e.Graphics.FillEllipse(brush, new Rectangle(x, y, width, height));
+            //if not moving
+            if (isStationary()) { 
+                e.Graphics.FillEllipse(brush, new RectangleF(X, Y, width, height));
+            }
+            else //if still moving or about to move
+            {
+                if (speed == 0) {
+                    handleStop();
+
+                }
+                else 
+                { 
+                    var distance = travelDistance();
+                    var newPoint = pointFrom(center,direction,distance);
+                    setCenter(newPoint);
+                 
+                    e.Graphics.FillEllipse(brush, new RectangleF(X, Y, width, height));
+                }
+                
+                
+            }
            
         }
         /*
@@ -59,7 +96,19 @@ namespace Bot
             return (getDistance((float)Cx, (float)Cy, (float)Dx, (float)Dy) <= radius);
         }
         */
+        private PointF offsetToCenter(PointF point)
+        {
+            return new PointF(point.X - (width / 2), point.Y - (height / 2));
+        }
 
+        public void setCenter(PointF point)
+        {
+            center = point;//offsetToCenter(point);
+            X = (point.X - (width / 2));
+            Y = (point.Y - (height / 2));
+
+        }
+        //(A,B) points of frontLine (C) point of center of ball
         public bool isCollideWithBot(PointF A, PointF B, PointF C)
         {
             var isValid = false;
@@ -86,10 +135,31 @@ namespace Bot
 
             if (isValid)
             {
-                return (getDistance((float)r.X, (float)r.Y, (float)C.X, (float)C.Y) <= radius);
+                return (getDistance((float)r.X, (float)r.Y, (float)C.X, (float)C.Y) <= (radius));
             }
 
             return false;
+        }
+
+        public void handleCollision(float speed, Angle direction)
+        {
+            //timeStep = 0;
+            this.speed = speed;
+            this.direction = direction;
+            this.status = 1;
+
+        }
+
+        public void handleStop()
+        {
+            //timeStep = 0;
+            this.speed = 0;
+            this.direction = null;
+            this.status = 0;
+        }
+
+        public bool isStationary(){
+            return (status == 0);
         }
 
         public float getDistance(float Ax, float Ay, float Bx, float By)
@@ -103,15 +173,33 @@ namespace Bot
             return result; 
         }
 
-        public int X
+        private float travelDistance()
         {
-            get { return x + (width / 2); }
-            set { x = value; }
+            speed = (float)(speed * Math.Pow(friction, timeStep));
+            //speed = speed - speed * (1 - friction) * timeStep;
+            return speed * max_speed;
         }
-        public int Y
+
+        private PointF pointFrom(PointF basePoint, Angle angle, float distance)
         {
-            get { return y + (height / 2); }
-            set { y = value; }
+            float x = (float)(Math.Cos(angle.Radian) * distance);
+            float y = (float)(Math.Sin(angle.Radian) * distance);
+
+            x = basePoint.X + x;
+            y = basePoint.Y - y;
+
+            return new PointF(x, y);
+        }
+
+        public float X
+        {
+            get;
+            set;
+        }
+        public float Y
+        {
+            get;
+            set;
         }
 
          

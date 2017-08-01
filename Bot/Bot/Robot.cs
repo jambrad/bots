@@ -107,7 +107,11 @@ namespace Robot
             return (rightSpeed == leftSpeed);
         }
 
-
+        //Temporary
+        public float getMaxSpeed()
+        {
+            return Math.Max(leftSpeed, rightSpeed);
+        }
         
         public void moveRobot(float left, float right)
         {

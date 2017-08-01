@@ -24,7 +24,8 @@ namespace Robot
 
             testPen = new Pen(Color.Red, 5);
 
-            myBall = new Ball((Field.Width / 2) + 200, (Field.Height / 2) + 200, 30, 30);
+            myBall = new Ball((Field.Width / 2) + 200, (Field.Height / 2) + 200, 30, 30, Refresher.Interval);
+            
 
             typeof(Panel).InvokeMember("DoubleBuffered",
                 System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
@@ -42,7 +43,7 @@ namespace Robot
             PointF[] points = myBot.getFrontPoints();
             var A = points[0];
             var B = points[1];
-            var C = new PointF((float)myBall.X, (float)myBall.Y);
+            var C = myBall.center;//new PointF((float)myBall.center.X, (float)myBall.center.Y);
 
             return myBall.isCollideWithBot(A, B, C);
            //return myBall.isCollideWithBot(myBot.getFrontPoints());
@@ -51,19 +52,20 @@ namespace Robot
         private void Refresher_Tick(object sender, EventArgs e)
         {
             
-            var angle = getFinalAngle();
+            double angle = getFinalAngle();
             //Console.WriteLine("angle: " + angle);
             myBot.moveRobot(angle, getDistance());
             if (isCollide())
             {
                 myBall.brush = new SolidBrush(Color.LightGreen);
+                myBall.handleCollision(.7f, myBot.angle);
             }
             else
             {
                 myBall.brush = new SolidBrush(Color.DarkRed);
             }
+
            
-            
             Field.Refresh();
 
             
@@ -82,12 +84,12 @@ namespace Robot
 
         private float getDeltaY()
         {
-            return myBot.center.Y - myBall.Y;
+            return myBot.center.Y - myBall.center.Y;
         }
 
         private float getDeltaX()
         {
-            return myBot.center.X - myBall.X;
+            return myBot.center.X - myBall.center.X;
         }
 
         private double getDistance()
@@ -104,19 +106,19 @@ namespace Robot
         public double getRelativeAngle()
         {
             // if the same x
-            if (myBot.center.X == myBall.X)
+            if (myBot.center.X == myBall.center.X)
             {
-                if (myBot.center.Y > myBall.Y)
+                if (myBot.center.Y > myBall.center.Y)
                 {
                     return 270;
                 }
-                else if (myBot.center.Y < myBall.Y)
+                else if (myBot.center.Y < myBall.center.Y)
                 {
                     return 90;
                 }
             }
 
-            var orientation = (double)(myBot.center.X < myBall.X ? 0 : 180);
+            var orientation = (double)(myBot.center.X < myBall.center.X ? 0 : 180);
 
             var deltaX = getDeltaX();
             var deltaY = getDeltaY();
@@ -151,7 +153,7 @@ namespace Robot
             }
             if (fa > 180)
             {
-                fa = -(fa - 180);
+                fa = -(180 - (fa % 180));
             }
             return fa;
         }
@@ -184,8 +186,8 @@ namespace Robot
 
         private void Field_MouseClick(object sender, MouseEventArgs e)
         {
-            myBall.X = e.X;
-            myBall.Y = e.Y;
+            myBall.setCenter(new PointF(e.X,e.Y));
+            myBall.handleStop();
         }
     }
 }
