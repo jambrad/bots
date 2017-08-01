@@ -97,6 +97,14 @@ namespace Robot
             moveRobot(leftSpeed,rightSpeed);
         }
 
+        public void moveRobotToPoint(float destX, float destY)
+        {
+            double angle = getFinalAngleToPoint(destX, destY);
+            double distance = getDistance(destX, destY);
+
+            moveRobot(angle, distance);
+        }
+
         public PointF[] getFrontPoints()
         {
             return new PointF[] { cornerPoints[1], cornerPoints[4] };
@@ -112,7 +120,83 @@ namespace Robot
         {
             return Math.Max(leftSpeed, rightSpeed);
         }
-        
+
+        public double getDistance(float X, float Y)
+        {
+            float tempX, tempY;
+            double result;
+            tempX = (float)Math.Pow((X - center.X), 2);
+            tempY = (float)Math.Pow((Y - center.Y), 2);
+            result = Math.Sqrt(tempX + tempY);
+
+            return result;
+        }
+
+        private double getRelativeAngle(float destX, float destY)
+        {
+            if (center.X == destX)
+            {
+                if (center.Y > destY)
+                {
+                    return 270;
+                }
+                else if (center.Y < destY)
+                {
+                    return 90;
+                }
+            }
+
+            var orientation = (double)(center.X < destX ? 0 : 180);
+
+            var deltaX = getDeltaX(center.X, destX);
+            var deltaY = getDeltaY(center.Y, destY);
+
+            var angle = Math.Atan(deltaY / deltaX);
+
+            var result = (angle * 180 / Math.PI);
+            //Console.Write("result: {0} >>> ", result);
+            result = (orientation - result);
+
+
+            return result;
+        }
+
+        private double getFinalAngleToPoint(float destX, float destY)
+        {
+            var ra = getRelativeAngle(destX,destY);
+            //Console.Write("Relative: {0}   Bot:  {1}  ", ra, myBot.angle.Degree);
+
+            var fa = -(angle.Degree - ra);
+            while ((fa < 0) || (fa >= 360))
+            {
+                if (fa < 0)
+                {
+                    fa += 360;
+                }
+                else
+                {
+                    fa -= 360;
+                }
+            }
+            if (fa > 180)
+            {
+                fa = -(180 - (fa % 180));
+            }
+            return fa;
+        }
+
+        private float getDeltaY(float p, float Y)
+        {
+            return p - Y;
+        }
+
+        private float getDeltaX(float p, float X)
+        {
+            return p - X;
+        }
+
+      
+
         public void moveRobot(float left, float right)
         {
             if (Math.Abs(left) == Math.Abs(right))

@@ -36,7 +36,7 @@ namespace Robot
             this.friction = .999f;
             this.status = 0;
             this.direction = null;
-            this.max_distance = 350f;
+            this.max_distance = 380f;
             this.max_speed = max_distance * (intervals / 1000f);
 
             this.timeStep = (intervals );
@@ -145,7 +145,7 @@ namespace Robot
         {
             //timeStep = 0;
             this.speed = speed;
-            this.direction = direction;
+            this.direction = new Angle(direction.Degree);
             this.status = 1;
 
         }
